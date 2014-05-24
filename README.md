@@ -3,19 +3,6 @@ Update Whizbang
 
 A small application that monitors changes in a set of files and mirrors them into target locations.
 
-Contents:
-1. Description
-
-2. Change list
-
-3. Building from source
-
-4. Usage
-
-5. License
-
-6. Credits
-
 1. Description:
 
 	The application was written with the goal of synchronizing Visual Studio-compiled files into Unity projects, instead of using a Post-Build step (easier to do with a GUI). Despite that, the Whizbang is completely agnostic of file types, and can be used for any workflow that requires files from a source location be moved to a target location frequently. Locations are set per-file, and there's also support for multiple configurations that synchronize different sets of files (Debug/Release/etc.).
