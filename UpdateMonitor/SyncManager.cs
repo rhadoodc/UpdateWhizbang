@@ -29,6 +29,14 @@ namespace Sprocket.UpdateMonitor
 
 		public bool Modified = false;
 
+		public int SyncItemCount
+		{
+			get
+			{
+				return items.Count;
+			}
+		}
+
 		public SyncManager()
 		{
 			items = new Dictionary<string,SyncItem>();
@@ -115,7 +123,10 @@ namespace Sprocket.UpdateMonitor
 
 		public void AddSyncItem (SyncItem item)
 		{
-			items.Add((item.SourceFileInfo.FullName), item); //hash this shorter?
+			if (!items.ContainsKey(item.SourceFileInfo.FullName))
+			{
+				items.Add((item.SourceFileInfo.FullName), item); //hash this shorter?
+			}
 
 			Modified = true;
 

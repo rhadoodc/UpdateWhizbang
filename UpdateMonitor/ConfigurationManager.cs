@@ -185,6 +185,17 @@ namespace Sprocket.UpdateMonitor
 			activeConfig.syncManager.AddSyncItem(item);
 		}
 
+		public int SyncItemCount
+		{
+			get
+			{
+				if ((activeConfig == null) || (activeConfig.syncManager == null))
+					return -1;
+
+				return activeConfig.syncManager.SyncItemCount;
+			}
+		}
+
 		public void RemoveSyncItem(string key)
 		{
 			activeConfig.syncManager.RemoveSyncItem(key);

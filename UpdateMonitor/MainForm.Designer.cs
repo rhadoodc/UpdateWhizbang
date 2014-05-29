@@ -46,8 +46,13 @@
 			this.iconImageList = new System.Windows.Forms.ImageList(this.components);
 			this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
 			this.systrayContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.dropboxHint = new System.Windows.Forms.PictureBox();
+			this.dropboxHint_desaturated = new System.Windows.Forms.PictureBox();
+			this.dropboxTooltip = new System.Windows.Forms.ToolTip(this.components);
 			this.toolStrip1.SuspendLayout();
 			this.mainStatusStrip.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.dropboxHint)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.dropboxHint_desaturated)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// toolStrip1
@@ -134,6 +139,7 @@
 			this.monitoredFilesListView.Name = "monitoredFilesListView";
 			this.monitoredFilesListView.Size = new System.Drawing.Size(298, 256);
 			this.monitoredFilesListView.TabIndex = 1;
+			this.dropboxTooltip.SetToolTip(this.monitoredFilesListView, "Drag & Drop\r\n   Files Here");
 			this.monitoredFilesListView.UseCompatibleStateImageBehavior = false;
 			this.monitoredFilesListView.DragDrop += new System.Windows.Forms.DragEventHandler(this.monitoredFilesListView_DragDrop);
 			this.monitoredFilesListView.DragEnter += new System.Windows.Forms.DragEventHandler(this.monitoredFilesListView_DragEnter);
@@ -187,19 +193,50 @@
 			this.systrayContextMenu.Size = new System.Drawing.Size(61, 4);
 			this.systrayContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.systrayContextMenu_Opening);
 			// 
+			// dropboxHint
+			// 
+			this.dropboxHint.BackgroundImage = global::Sprocket.UpdateMonitor.Properties.Resources.dropbox;
+			this.dropboxHint.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+			this.dropboxHint.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.dropboxHint.Enabled = false;
+			this.dropboxHint.Location = new System.Drawing.Point(0, 25);
+			this.dropboxHint.Name = "dropboxHint";
+			this.dropboxHint.Size = new System.Drawing.Size(298, 234);
+			this.dropboxHint.TabIndex = 4;
+			this.dropboxHint.TabStop = false;
+			this.dropboxHint.Visible = false;
+			// 
+			// dropboxHint_desaturated
+			// 
+			this.dropboxHint_desaturated.BackColor = System.Drawing.Color.Transparent;
+			this.dropboxHint_desaturated.BackgroundImage = global::Sprocket.UpdateMonitor.Properties.Resources.dropbox_desaturated;
+			this.dropboxHint_desaturated.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+			this.dropboxHint_desaturated.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.dropboxHint_desaturated.Enabled = false;
+			this.dropboxHint_desaturated.Location = new System.Drawing.Point(0, 25);
+			this.dropboxHint_desaturated.Name = "dropboxHint_desaturated";
+			this.dropboxHint_desaturated.Size = new System.Drawing.Size(298, 234);
+			this.dropboxHint_desaturated.TabIndex = 5;
+			this.dropboxHint_desaturated.TabStop = false;
+			this.dropboxHint_desaturated.Visible = false;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(298, 281);
+			this.Controls.Add(this.dropboxHint_desaturated);
+			this.Controls.Add(this.dropboxHint);
 			this.Controls.Add(this.mainStatusStrip);
 			this.Controls.Add(this.monitoredFilesListView);
 			this.Controls.Add(this.toolStrip1);
+			this.DoubleBuffered = true;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.Name = "MainForm";
 			this.ShowInTaskbar = false;
 			this.Text = "Update Whizbang";
+			this.Activated += new System.EventHandler(this.MainForm_Activated);
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
 			this.Resize += new System.EventHandler(this.MainForm_Resize);
@@ -207,6 +244,8 @@
 			this.toolStrip1.PerformLayout();
 			this.mainStatusStrip.ResumeLayout(false);
 			this.mainStatusStrip.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.dropboxHint)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.dropboxHint_desaturated)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -230,6 +269,9 @@
 		public System.Windows.Forms.ToolStripProgressBar currentActionProgressBar;
 		private System.Windows.Forms.NotifyIcon notifyIcon;
 		private System.Windows.Forms.ContextMenuStrip systrayContextMenu;
+		private System.Windows.Forms.PictureBox dropboxHint;
+		private System.Windows.Forms.PictureBox dropboxHint_desaturated;
+		private System.Windows.Forms.ToolTip dropboxTooltip;
 	}
 }
 

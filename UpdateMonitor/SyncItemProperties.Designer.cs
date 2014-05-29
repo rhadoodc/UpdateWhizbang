@@ -126,12 +126,14 @@
 			// 
 			this.errorProvider.BlinkStyle = System.Windows.Forms.ErrorBlinkStyle.NeverBlink;
 			this.errorProvider.ContainerControl = this;
+			this.errorProvider.RightToLeft = true;
 			// 
 			// SyncItemProperties
 			// 
 			this.AcceptButton = this.applyButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoValidate = System.Windows.Forms.AutoValidate.EnableAllowFocusChange;
 			this.CancelButton = this.cancelButton;
 			this.ClientSize = new System.Drawing.Size(344, 166);
 			this.Controls.Add(this.sourceLabel);

@@ -45,6 +45,7 @@ namespace Sprocket.UpdateMonitor
 		bool showMinimizedNotification = true;
 
 		Timer timer;
+		Timer dropBoxHintTimer;
 
 		public MainForm()
 		{
@@ -59,9 +60,32 @@ namespace Sprocket.UpdateMonitor
 			timer.Interval = 10000;
 			timer.Tick += Sync;
 
+			dropBoxHintTimer = new Timer();
+			dropBoxHintTimer.Enabled = false;
+			dropBoxHintTimer.Interval = 1000;
+			dropBoxHintTimer.Tick += HideDropboxHint;
+
+			dropboxHint_desaturated.Parent = monitoredFilesListView;
+
 			systrayContextMenu.Items.Add(syncAll_key, Properties.Resources.forceSync, Sync);
 			systrayContextMenu.Items.Add(separator_key);
 			systrayContextMenu.Items.Add(quit_key, Properties.Resources.stop, Quit);
+		}
+
+		private void ShowDropboxHint()
+		{
+			dropboxHint_desaturated.Visible = true;
+
+			dropBoxHintTimer.Enabled = true;
+			dropBoxHintTimer.Start();
+		}
+
+		private void HideDropboxHint(object sender, EventArgs e)
+		{
+			dropboxHint_desaturated.Visible = false;
+
+			dropBoxHintTimer.Stop();
+			dropBoxHintTimer.Enabled = false;
 		}
 
 		private void Sync(object sender, EventArgs e)
@@ -165,6 +189,15 @@ namespace Sprocket.UpdateMonitor
 			foreach (var rem in toRemove)
 			{
 				monitoredFilesListView.Items.Remove(rem);
+			}
+
+			if (Program.configManager.SyncItemCount <= 0)
+			{
+				dropboxHint.Visible = true;
+			}
+			else
+			{
+				dropboxHint.Visible = false;
 			}
 		}
 
@@ -436,6 +469,12 @@ namespace Sprocket.UpdateMonitor
 				this.WindowState = FormWindowState.Normal;
 				this.Activate();
 			}
+		}
+
+		private void MainForm_Activated(object sender, EventArgs e)
+		{
+			if ((dropboxHint.Visible == false) && (Visible == true))
+				ShowDropboxHint();
 		}
 	}
 }

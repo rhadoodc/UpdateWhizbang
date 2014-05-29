@@ -113,6 +113,26 @@ namespace Sprocket.UpdateMonitor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap dropbox {
+            get {
+                object obj = ResourceManager.GetObject("dropbox", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap dropbox_desaturated {
+            get {
+                object obj = ResourceManager.GetObject("dropbox_desaturated", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap forceSync {
             get {
                 object obj = ResourceManager.GetObject("forceSync", resourceCulture);

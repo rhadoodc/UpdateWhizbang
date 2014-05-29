@@ -116,6 +116,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="brick_link.ico" />
+    <None Include="Resources\dropbox_desaturated.png" />
+    <None Include="Resources\dropbox.png" />
     <None Include="Resources\stop.png" />
     <None Include="Resources\brick_copy_icon.ico" />
     <None Include="Resources\forceSync.png" />
