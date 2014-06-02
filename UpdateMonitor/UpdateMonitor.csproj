@@ -55,7 +55,6 @@
     </Compile>
     <Compile Include="Configuration.cs" />
     <Compile Include="ConfigurationManager.cs" />
-    <Compile Include="FormResult.cs" />
     <Compile Include="IconExtractor.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>

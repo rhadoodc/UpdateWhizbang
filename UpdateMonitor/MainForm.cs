@@ -1,14 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Sprocket.UpdateMonitor
@@ -20,7 +13,11 @@ namespace Sprocket.UpdateMonitor
 
 		const string multipleItemsSelected_key = "Multiple Items Selected [{0}]";
 		const string multipleSourcePaths_key = "Multiple Source Paths";
-		const string multipleTargetPaths_key = "Multiple Target Paths";
+		const string multipleTargetPaths_key = "Multiple Unmatched Target Paths";
+
+		const string multipleUnmatchedTargetPathsOverride_key  = "The items selected have several paths that did not match before the edit operations performed. Proceeding with applying changes will assign to them only the paths that are common to all.";
+
+		const string multipleUnmatchTargetPathsOverrideTitle_key = "Override Multiple Unmatched Paths";
 
 		const string minimizedNotification_key = "The whizbang has retreated into the shadows and will continue to do your bidding quietly. You can banish it completely by right-clicking its icon in the notification area.";
 		const string minimized_key = "Minimized";
@@ -60,12 +57,12 @@ namespace Sprocket.UpdateMonitor
 			timer.Interval = 10000;
 			timer.Tick += Sync;
 
-			dropBoxHintTimer = new Timer();
-			dropBoxHintTimer.Enabled = false;
-			dropBoxHintTimer.Interval = 1000;
-			dropBoxHintTimer.Tick += HideDropboxHint;
+			//dropBoxHintTimer = new Timer();
+			//dropBoxHintTimer.Enabled = false;
+			//dropBoxHintTimer.Interval = 1000;
+			//dropBoxHintTimer.Tick += HideDropboxHint;
 
-			dropboxHint_desaturated.Parent = monitoredFilesListView;
+			//dropboxHint_desaturated.Parent = monitoredFilesListView;
 
 			systrayContextMenu.Items.Add(syncAll_key, Properties.Resources.forceSync, Sync);
 			systrayContextMenu.Items.Add(separator_key);
@@ -278,13 +275,22 @@ namespace Sprocket.UpdateMonitor
 			var props = new SyncItemProperties();
 			var n = targetItems.Count();
 
+			bool multipleUnmatchedTargets = false;
+
 			if (n == 1)
 			{
 				var targetItem = targetItems.Single();
 				
 				props.selectedItemLabel.Text = targetItem.SourceFileInfo.Name;
+				
+				int i = 0;
 
-				props.targetPathTextBox.Text = targetItem.TargetPath;
+				foreach (var targetPath in targetItem.targetPaths)
+				{
+					props.ConstructTargetField(i);
+					props.targetPathTextBoxes[i].Text = targetPath;
+					++i;
+				}
 
 				props.sourceTextBox.Text = targetItem.SourcePath;
 			}
@@ -294,15 +300,37 @@ namespace Sprocket.UpdateMonitor
 
 				props.sourceTextBox.Text = multipleSourcePaths_key;
 
-				var firstItem = targetItems.First();
+				var targetList = new List<string>();
 
-				if (targetItems.All(i => i.TargetPath == firstItem.TargetPath))
+				int i = 0;
+
+				foreach (var item in targetItems)
 				{
-					props.targetPathTextBox.Text = firstItem.TargetPath;
+					foreach (var path in item.targetPaths)
+					{
+						if (targetItems.All(it => it.targetPaths.Contains(path)))
+						{
+							if (!targetList.Contains(path))
+							{
+								targetList.Add(path);
+								props.ConstructTargetField(i);
+								props.targetPathTextBoxes[i].Text = path;
+								++i;
+							}
+						}
+						else
+						{
+							multipleUnmatchedTargets = true;
+						}
+					}
 				}
-				else
+
+				if (multipleUnmatchedTargets)
 				{
-					props.targetPathTextBox.Text = multipleTargetPaths_key;
+					props.ConstructTargetField(i);
+					props.targetPathTextBoxes[i].Text = multipleTargetPaths_key;
+					props.targetPathTextBoxes[i].Enabled = false;
+					++i;
 				}
 			}
 
@@ -310,9 +338,13 @@ namespace Sprocket.UpdateMonitor
 
 			if (result == DialogResult.OK)
 			{
-				foreach (var item in targetItems)
+				if (!multipleUnmatchedTargets 
+				|| (MessageBox.Show(multipleUnmatchedTargetPathsOverride_key, multipleUnmatchTargetPathsOverrideTitle_key, MessageBoxButtons.OKCancel) == DialogResult.OK))
 				{
-					item.TargetPath = props.targetPathTextBox.Text;
+					foreach (var item in targetItems)
+					{
+						item.targetPaths = props.targetPathTextBoxes.Where(b => b.Enabled == true).Select(t => t.Text).Where(x => x != string.Empty).ToList();
+					}
 				}
 			}
 
@@ -473,8 +505,8 @@ namespace Sprocket.UpdateMonitor
 
 		private void MainForm_Activated(object sender, EventArgs e)
 		{
-			if ((dropboxHint.Visible == false) && (Visible == true))
-				ShowDropboxHint();
+			//if ((dropboxHint.Visible == false) && (Visible == true))
+			//	ShowDropboxHint();
 		}
 	}
 }

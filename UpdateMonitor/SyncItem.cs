@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
-using System.Xml.Serialization;
 
 namespace Sprocket.UpdateMonitor
 {
@@ -26,10 +26,6 @@ namespace Sprocket.UpdateMonitor
 			UpToDate,
 			Outdated,
 		}
-
-		[NonSerialized]
-		[XmlIgnore]
-		public SyncState lastSyncState = SyncState.None;
 
 		[NonSerialized]
 		private FileInfo sourceFileInfo = null;
@@ -61,25 +57,11 @@ namespace Sprocket.UpdateMonitor
 				catch (System.Exception ex)
 				{
 					MessageBox.Show(string.Format(sourcePathException_key, value, ex.Message), exception_key, MessageBoxButtons.OK);
-					lastSyncState = SyncState.TargetException;
 				}
 			}
 		}
 
-		private string targetPath;
-
-		public string TargetPath
-		{
-			get
-			{
-				return targetPath;
-			}
-
-			set
-			{
-				targetPath = value;
-			}
-		}
+		public List<string> targetPaths = new List<string>();
 
 		public SyncItem()
 		{
@@ -91,14 +73,12 @@ namespace Sprocket.UpdateMonitor
 			SourcePath = _sourcePath;
 		}
 
-		public SyncState CheckUpToDate()
+		public SyncState CheckUpToDate(string path)
 		{
-			lastSyncState = CheckUpToDate_Internal();
-
-			return lastSyncState;
+			return CheckUpToDate_Internal(path);
 		}
 
-		private SyncState CheckUpToDate_Internal()
+		private SyncState CheckUpToDate_Internal(string targetPath)
 		{
 			var TargetFileInfo = new FileInfo(Path.Combine(targetPath, sourceFileInfo.Name));
 
@@ -132,20 +112,25 @@ namespace Sprocket.UpdateMonitor
 
 		public bool Sync()
 		{
-			var state = CheckUpToDate();
+			bool doWork = false;
 
-			var doWork = (state == SyncState.Outdated) || (state == SyncState.TargetNotFound);
-
-			try
+			foreach (var targetPath in targetPaths)
 			{
-				if (doWork)
+				var state = CheckUpToDate(targetPath);
+
+				doWork |= (state == SyncState.Outdated) || (state == SyncState.TargetNotFound);
+
+				try
 				{
-					File.Copy(SourcePath, Path.Combine(TargetPath, SourceFileInfo.Name), true);
+					if (doWork)
+					{
+						File.Copy(SourcePath, Path.Combine(targetPath, SourceFileInfo.Name), true);
+					}
 				}
-			}
-			catch (System.Exception ex)
-			{
-				MessageBox.Show(string.Format(syncException_key, SourcePath, TargetPath, ex.Message), exception_key, MessageBoxButtons.OK);
+				catch (System.Exception ex)
+				{
+					MessageBox.Show(string.Format(syncException_key, SourcePath, targetPath, ex.Message), exception_key, MessageBoxButtons.OK);
+				}
 			}
 
 			return doWork;
