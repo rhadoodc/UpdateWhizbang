@@ -33,7 +33,7 @@ namespace Sprocket.UpdateMonitor
 		const string syncing_key = "Syncing...";
 		const string synchronized_key = "Synchronized";
 
-		const string synchronizedStatus_key = "The whizbang has synchronized {0} files.";
+		const string synchronizedStatus_key = "The whizbang has synchronized {0} items.";
 
 		const string idle_key = "Idle";
 

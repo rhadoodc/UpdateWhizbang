@@ -143,5 +143,13 @@ namespace Sprocket.UpdateMonitor
 		{
 			ConstructTargetField(-1);
 		}
+
+		private void SyncItemProperties_Shown(object sender, EventArgs e)
+		{
+			if (targetPathTextBoxes.Count == 0)
+			{
+				ConstructTargetField(-1);
+			}
+		}
 	}
 }

@@ -143,6 +143,7 @@
 			this.Name = "SyncItemProperties";
 			this.ShowInTaskbar = false;
 			this.Text = "Sync Item Properties";
+			this.Shown += new System.EventHandler(this.SyncItemProperties_Shown);
 			((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
 			this.bottomControlsPannel.ResumeLayout(false);
 			this.ResumeLayout(false);

@@ -28,12 +28,12 @@ namespace Sprocket.UpdateMonitor
 		}
 
 		[NonSerialized]
-		private FileInfo sourceFileInfo = null;
+		private FileSystemInfo sourceFileInfo = null;
 		
 		[NonSerialized]
-		private FileInfo targetFileInfo = null;
+		private FileSystemInfo targetFileInfo = null;
 
-		public FileInfo SourceFileInfo
+		public FileSystemInfo SourceFileInfo
 		{
 			get
 			{
@@ -52,7 +52,12 @@ namespace Sprocket.UpdateMonitor
 			{
 				try
 				{
-					sourceFileInfo = new FileInfo(value);
+					var attributes = File.GetAttributes(value);
+
+					if ((attributes & FileAttributes.Directory) == FileAttributes.Directory)
+						sourceFileInfo = new DirectoryInfo(value);
+					else
+						sourceFileInfo = new FileInfo(value);
 				}
 				catch (System.Exception ex)
 				{
@@ -80,7 +85,16 @@ namespace Sprocket.UpdateMonitor
 
 		private SyncState CheckUpToDate_Internal(string targetPath)
 		{
-			var TargetFileInfo = new FileInfo(Path.Combine(targetPath, sourceFileInfo.Name));
+			FileSystemInfo TargetFileInfo = null;
+
+			var path = Path.Combine(targetPath, sourceFileInfo.Name);
+			
+			var attributes = File.GetAttributes(SourcePath);
+
+			if ((attributes & FileAttributes.Directory) == FileAttributes.Directory)
+				TargetFileInfo = new DirectoryInfo(path);
+			else
+				TargetFileInfo = new FileInfo(path);
 
 			if (!SourceFileInfo.Exists)
 			{
@@ -92,7 +106,7 @@ namespace Sprocket.UpdateMonitor
 				return SyncState.TargetNotFound;
 			}
 
-			if (TargetFileInfo.IsReadOnly)
+			if ((TargetFileInfo is FileInfo) && (((FileInfo)TargetFileInfo).IsReadOnly))
 			{
 				return SyncState.TargetReadOnly;
 			}
@@ -101,8 +115,7 @@ namespace Sprocket.UpdateMonitor
 			{
 				return SyncState.Outdated;
 			}
-			else if ((SourceFileInfo.LastWriteTime < TargetFileInfo.LastWriteTime)
-				&& (SourceFileInfo.Length != TargetFileInfo.Length))
+			else if (SourceFileInfo.LastWriteTime < TargetFileInfo.LastWriteTime)
 			{
 				return SyncState.TargetModifiedExternally;
 			}
@@ -124,7 +137,11 @@ namespace Sprocket.UpdateMonitor
 				{
 					if (doWork)
 					{
-						File.Copy(SourcePath, Path.Combine(targetPath, SourceFileInfo.Name), true);
+						var attributes = File.GetAttributes(SourcePath);
+						if ((attributes & FileAttributes.Directory) == FileAttributes.Directory)
+							DirectoryCopy(SourcePath, Path.Combine(targetPath, SourceFileInfo.Name), true);
+						else
+							File.Copy(SourcePath, Path.Combine(targetPath, SourceFileInfo.Name), true);
 					}
 				}
 				catch (System.Exception ex)
@@ -134,6 +151,37 @@ namespace Sprocket.UpdateMonitor
 			}
 
 			return doWork;
+		}
+
+		private void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
+		{
+			// Get the subdirectories for the specified directory.
+			DirectoryInfo dir = SourceFileInfo as DirectoryInfo;
+			DirectoryInfo[] dirs = dir.GetDirectories();
+
+			// If the destination directory doesn't exist, create it. 
+			if (!Directory.Exists(destDirName))
+			{
+				Directory.CreateDirectory(destDirName);
+			}
+
+			// Get the files in the directory and copy them to the new location.
+			FileInfo[] files = dir.GetFiles();
+			foreach (FileInfo file in files)
+			{
+				string temppath = Path.Combine(destDirName, file.Name);
+				file.CopyTo(temppath, false);
+			}
+
+			// If copying subdirectories, copy them and their contents to new location. 
+			if (copySubDirs)
+			{
+				foreach (DirectoryInfo subdir in dirs)
+				{
+					string temppath = Path.Combine(destDirName, subdir.Name);
+					DirectoryCopy(subdir.FullName, temppath, copySubDirs);
+				}
+			}
 		}
 	}
 }
