@@ -42,11 +42,17 @@ namespace Sprocket.UpdateMonitor
 		bool showMinimizedNotification = true;
 
 		Timer timer;
-		Timer dropBoxHintTimer;
+		//Timer dropBoxHintTimer;
 
 		public MainForm()
 		{
 			InitializeComponent();
+
+			appVersionLabel.Text = "v" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()
+#if DEBUG
+				+ "[DEBUG]"
+#endif
+				;
 
 			Program.configManager.OnConfigListChanged += OnConfigurationListChanged;
 			Program.configManager.OnSyncListUpdated += OnSyncListUpdated;
@@ -69,21 +75,21 @@ namespace Sprocket.UpdateMonitor
 			systrayContextMenu.Items.Add(quit_key, Properties.Resources.stop, Quit);
 		}
 
-		private void ShowDropboxHint()
-		{
-			dropboxHint_desaturated.Visible = true;
+		//private void ShowDropboxHint()
+		//{
+		//	dropboxHint_desaturated.Visible = true;
 
-			dropBoxHintTimer.Enabled = true;
-			dropBoxHintTimer.Start();
-		}
+		//	dropBoxHintTimer.Enabled = true;
+		//	dropBoxHintTimer.Start();
+		//}
 
-		private void HideDropboxHint(object sender, EventArgs e)
-		{
-			dropboxHint_desaturated.Visible = false;
+		//private void HideDropboxHint(object sender, EventArgs e)
+		//{
+		//	dropboxHint_desaturated.Visible = false;
 
-			dropBoxHintTimer.Stop();
-			dropBoxHintTimer.Enabled = false;
-		}
+		//	dropBoxHintTimer.Stop();
+		//	dropBoxHintTimer.Enabled = false;
+		//}
 
 		private void Sync(object sender, EventArgs e)
 		{
@@ -93,6 +99,9 @@ namespace Sprocket.UpdateMonitor
 		private void Quit(object sender, EventArgs e)
 		{
 			var answer = Program.configManager.AskSaveChanges();
+
+			Properties.Settings.Default.LastUsedConfiguration = activeConfigurationComboBox.SelectedIndex;
+			Properties.Settings.Default.Save();
 
 			if (answer != System.Windows.Forms.DialogResult.Cancel)
 			{
@@ -460,7 +469,7 @@ namespace Sprocket.UpdateMonitor
 
 		internal void Initialize()
 		{
-			activeConfigurationComboBox.SelectedIndex = 0;
+			activeConfigurationComboBox.SelectedIndex = Properties.Settings.Default.LastUsedConfiguration;
 		}
 
 		private void MainForm_Resize(object sender, EventArgs e)

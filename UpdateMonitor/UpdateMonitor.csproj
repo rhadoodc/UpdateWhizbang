@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -30,6 +31,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Resources\brick_link_icon.ico</ApplicationIcon>
@@ -134,5 +136,17 @@
   </Target>
   <Target Name="AfterBuild">
   </Target>
-  -->
+	-->
+  <PropertyGroup>
+    <PostBuildEvent>
+		</PostBuildEvent>
+  </PropertyGroup>
+  <Target Name="AfterBuild" Condition="'Release' == '$(ConfigurationName)'">
+    <Exec Command="echo Running AfterBuild Target" />
+    <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
+      <Output TaskParameter="Assemblies" ItemName="AssemblyVersion" />
+    </GetAssemblyIdentity>
+    <Exec Command="echo Built version %(AssemblyVersion.Version)%" />
+    <Exec Command="if &quot;Release&quot; == &quot;$(ConfigurationName)&quot; &quot;C:\Program Files\7-Zip\7z.exe&quot; a -tzip  &quot;$(ProjectDir)Binaries\UpdateWhizbang_v%(AssemblyVersion.Version).zip&quot; &quot;$(TargetPath)&quot; &quot;$(TargetPath).config&quot;" />
+  </Target>
 </Project>

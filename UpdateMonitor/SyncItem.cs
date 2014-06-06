@@ -29,9 +29,6 @@ namespace Sprocket.UpdateMonitor
 
 		[NonSerialized]
 		private FileSystemInfo sourceFileInfo = null;
-		
-		[NonSerialized]
-		private FileSystemInfo targetFileInfo = null;
 
 		public FileSystemInfo SourceFileInfo
 		{

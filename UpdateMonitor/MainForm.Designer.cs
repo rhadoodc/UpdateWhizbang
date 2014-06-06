@@ -43,6 +43,8 @@
 			this.mainStatusStrip = new System.Windows.Forms.StatusStrip();
 			this.applicationStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.currentActionProgressBar = new System.Windows.Forms.ToolStripProgressBar();
+			this.flexSpace = new System.Windows.Forms.ToolStripStatusLabel();
+			this.appVersionLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.iconImageList = new System.Windows.Forms.ImageList(this.components);
 			this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
 			this.systrayContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -154,7 +156,9 @@
 			// 
 			this.mainStatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.applicationStatusLabel,
-            this.currentActionProgressBar});
+            this.currentActionProgressBar,
+            this.flexSpace,
+            this.appVersionLabel});
 			this.mainStatusStrip.Location = new System.Drawing.Point(0, 259);
 			this.mainStatusStrip.Name = "mainStatusStrip";
 			this.mainStatusStrip.Size = new System.Drawing.Size(298, 22);
@@ -170,8 +174,22 @@
 			// currentActionProgressBar
 			// 
 			this.currentActionProgressBar.Name = "currentActionProgressBar";
-			this.currentActionProgressBar.Size = new System.Drawing.Size(100, 16);
+			this.currentActionProgressBar.Size = new System.Drawing.Size(100, 18);
 			this.currentActionProgressBar.Visible = false;
+			// 
+			// flexSpace
+			// 
+			this.flexSpace.Name = "flexSpace";
+			this.flexSpace.Size = new System.Drawing.Size(211, 17);
+			this.flexSpace.Spring = true;
+			// 
+			// appVersionLabel
+			// 
+			this.appVersionLabel.Enabled = false;
+			this.appVersionLabel.Name = "appVersionLabel";
+			this.appVersionLabel.RightToLeft = System.Windows.Forms.RightToLeft.No;
+			this.appVersionLabel.Size = new System.Drawing.Size(46, 17);
+			this.appVersionLabel.Text = "Version";
 			// 
 			// iconImageList
 			// 
@@ -272,6 +290,8 @@
 		private System.Windows.Forms.PictureBox dropboxHint;
 		private System.Windows.Forms.PictureBox dropboxHint_desaturated;
 		private System.Windows.Forms.ToolTip dropboxTooltip;
+		private System.Windows.Forms.ToolStripStatusLabel appVersionLabel;
+		private System.Windows.Forms.ToolStripStatusLabel flexSpace;
 	}
 }
 
