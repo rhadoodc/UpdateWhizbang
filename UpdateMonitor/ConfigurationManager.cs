@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -19,7 +20,15 @@ namespace Sprocket.UpdateMonitor
 
 		const string addConfigurationList_key = "[+] New Configuration [...]";
 
-		const string configBucketPath = "configurations.xml";
+		const string configBucketFile_key = "configurations.xml";
+
+		string ConfigBucketPath
+		{
+			get
+			{
+				return Path.Combine(Program.appDataPath, configBucketFile_key);
+			}
+		}
 
 		public bool Modified = false;
 
@@ -69,7 +78,7 @@ namespace Sprocket.UpdateMonitor
 			TextReader reader = null;
 			try
 			{
-				reader = new StreamReader(configBucketPath);
+				reader = new StreamReader(ConfigBucketPath);
 				configBucket = (List<Configuration>)xmlSerializer.Deserialize(reader);
 			}
 			catch (System.Exception ex)
@@ -78,7 +87,7 @@ namespace Sprocket.UpdateMonitor
 
 				if (!(ex is FileNotFoundException || ex is DirectoryNotFoundException))
 				{
-					MessageBox.Show(string.Format(configBucketLoadError_key, Path.GetFullPath(configBucketPath), ex.Message),
+					MessageBox.Show(string.Format(configBucketLoadError_key, Path.GetFullPath(ConfigBucketPath), ex.Message),
 								configBucketLoadErrorTitle_key,
 								MessageBoxButtons.OK,
 								MessageBoxIcon.Error,
@@ -118,14 +127,14 @@ namespace Sprocket.UpdateMonitor
 
 			try
 			{
-				var s = Path.GetFullPath(configBucketPath).Replace(Path.GetFileName(configBucketPath), string.Empty);
+				var s = Path.GetFullPath(ConfigBucketPath).Replace(Path.GetFileName(ConfigBucketPath), string.Empty);
 				Directory.CreateDirectory(s);
-				writer = new StreamWriter(configBucketPath);
+				writer = new StreamWriter(ConfigBucketPath);
 				xmlSerializer.Serialize(writer, configBucket);
 			}
 			catch (System.Exception ex)
 			{
-				MessageBox.Show(string.Format(configBucketSaveError_key, Path.GetFullPath(configBucketPath), ex.Message),
+				MessageBox.Show(string.Format(configBucketSaveError_key, Path.GetFullPath(ConfigBucketPath), ex.Message),
 								configBucketSaveErrorTitle_key,
 								MessageBoxButtons.OK,
 								MessageBoxIcon.Error,
@@ -158,18 +167,23 @@ namespace Sprocket.UpdateMonitor
 
 				if (userAnswer == DialogResult.Yes)
 				{
-					SaveConfigBucket();
-
-					foreach (var config in configBucket)
-					{
-						config.SyncManagerSave();
-					}
+					SaveAll();
 				}
 
 				return userAnswer;
 			}
 
 			return DialogResult.None;
+		}
+
+		public void SaveAll()
+		{
+			SaveConfigBucket();
+
+			foreach (var config in configBucket)
+			{
+				config.SyncManagerSave();
+			}
 		}
 
 		public IEnumerable<SyncItem> GetSyncItems(List<string> itemKeys)

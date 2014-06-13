@@ -153,6 +153,35 @@ namespace Sprocket.UpdateMonitor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap save_to_disk {
+            get {
+                object obj = ResourceManager.GetObject("save_to_disk", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sprocket Inc..
+        /// </summary>
+        internal static string sprocketAppDataFolder_key {
+            get {
+                return ResourceManager.GetString("sprocketAppDataFolder_key", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap SprocketLogoInlineSmall {
+            get {
+                object obj = ResourceManager.GetObject("SprocketLogoInlineSmall", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap stop {
             get {
                 object obj = ResourceManager.GetObject("stop", resourceCulture);
@@ -177,6 +206,15 @@ namespace Sprocket.UpdateMonitor.Properties {
             get {
                 object obj = ResourceManager.GetObject("syncItemProperties", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update Whizbang.
+        /// </summary>
+        internal static string updateMonitorAppDataFolder_key {
+            get {
+                return ResourceManager.GetString("updateMonitorAppDataFolder_key", resourceCulture);
             }
         }
         

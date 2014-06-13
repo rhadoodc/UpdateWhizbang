@@ -30,46 +30,51 @@
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+			this.mainToolStrip = new System.Windows.Forms.ToolStrip();
 			this.activeConfigurationComboBox = new System.Windows.Forms.ToolStripComboBox();
 			this.addConfigurationButton = new System.Windows.Forms.ToolStripButton();
 			this.removeConfigurationButton = new System.Windows.Forms.ToolStripButton();
 			this.forceSyncSelectedButton = new System.Windows.Forms.ToolStripButton();
+			this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+			this.saveConfigurationsButton = new System.Windows.Forms.ToolStripButton();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.forceUpdateButton = new System.Windows.Forms.ToolStripButton();
 			this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
 			this.monitoredFilesListView = new System.Windows.Forms.ListView();
 			this.listViewContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.mainStatusStrip = new System.Windows.Forms.StatusStrip();
+			this.appVersionLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.applicationStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.currentActionProgressBar = new System.Windows.Forms.ToolStripProgressBar();
 			this.flexSpace = new System.Windows.Forms.ToolStripStatusLabel();
-			this.appVersionLabel = new System.Windows.Forms.ToolStripStatusLabel();
+			this.SprocketLogoButton = new System.Windows.Forms.ToolStripStatusLabel();
 			this.iconImageList = new System.Windows.Forms.ImageList(this.components);
 			this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
 			this.systrayContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.dropboxHint = new System.Windows.Forms.PictureBox();
 			this.dropboxHint_desaturated = new System.Windows.Forms.PictureBox();
 			this.dropboxTooltip = new System.Windows.Forms.ToolTip(this.components);
-			this.toolStrip1.SuspendLayout();
+			this.mainToolStrip.SuspendLayout();
 			this.mainStatusStrip.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.dropboxHint)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.dropboxHint_desaturated)).BeginInit();
 			this.SuspendLayout();
 			// 
-			// toolStrip1
+			// mainToolStrip
 			// 
-			this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+			this.mainToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+			this.mainToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.activeConfigurationComboBox,
             this.addConfigurationButton,
             this.removeConfigurationButton,
-            this.forceSyncSelectedButton});
-			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-			this.toolStrip1.Name = "toolStrip1";
-			this.toolStrip1.Size = new System.Drawing.Size(298, 25);
-			this.toolStrip1.TabIndex = 0;
-			this.toolStrip1.Text = "MainToolStrip";
+            this.forceSyncSelectedButton,
+            this.toolStripSeparator3,
+            this.saveConfigurationsButton});
+			this.mainToolStrip.Location = new System.Drawing.Point(0, 0);
+			this.mainToolStrip.Name = "mainToolStrip";
+			this.mainToolStrip.Size = new System.Drawing.Size(384, 25);
+			this.mainToolStrip.TabIndex = 0;
+			this.mainToolStrip.Text = "MainToolStrip";
 			// 
 			// activeConfigurationComboBox
 			// 
@@ -111,6 +116,24 @@
 			this.forceSyncSelectedButton.Text = "Force Sync Selected";
 			this.forceSyncSelectedButton.Click += new System.EventHandler(this.forceSyncSelectedButton_Click);
 			// 
+			// toolStripSeparator3
+			// 
+			this.toolStripSeparator3.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.toolStripSeparator3.Name = "toolStripSeparator3";
+			this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
+			// 
+			// saveConfigurationsButton
+			// 
+			this.saveConfigurationsButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.saveConfigurationsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.saveConfigurationsButton.Image = global::Sprocket.UpdateMonitor.Properties.Resources.save_to_disk;
+			this.saveConfigurationsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.saveConfigurationsButton.Name = "saveConfigurationsButton";
+			this.saveConfigurationsButton.Size = new System.Drawing.Size(23, 22);
+			this.saveConfigurationsButton.Text = "toolStripButton1";
+			this.saveConfigurationsButton.ToolTipText = "Save Configurations";
+			this.saveConfigurationsButton.Click += new System.EventHandler(this.saveConfigurationsButton_Click);
+			// 
 			// toolStripSeparator1
 			// 
 			this.toolStripSeparator1.Name = "toolStripSeparator1";
@@ -139,7 +162,7 @@
 			this.monitoredFilesListView.HideSelection = false;
 			this.monitoredFilesListView.Location = new System.Drawing.Point(0, 25);
 			this.monitoredFilesListView.Name = "monitoredFilesListView";
-			this.monitoredFilesListView.Size = new System.Drawing.Size(298, 256);
+			this.monitoredFilesListView.Size = new System.Drawing.Size(384, 287);
 			this.monitoredFilesListView.TabIndex = 1;
 			this.dropboxTooltip.SetToolTip(this.monitoredFilesListView, "Drag & Drop\r\n   Files Here");
 			this.monitoredFilesListView.UseCompatibleStateImageBehavior = false;
@@ -155,41 +178,56 @@
 			// mainStatusStrip
 			// 
 			this.mainStatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.appVersionLabel,
             this.applicationStatusLabel,
             this.currentActionProgressBar,
             this.flexSpace,
-            this.appVersionLabel});
-			this.mainStatusStrip.Location = new System.Drawing.Point(0, 259);
+            this.SprocketLogoButton});
+			this.mainStatusStrip.Location = new System.Drawing.Point(0, 280);
 			this.mainStatusStrip.Name = "mainStatusStrip";
-			this.mainStatusStrip.Size = new System.Drawing.Size(298, 22);
+			this.mainStatusStrip.Size = new System.Drawing.Size(384, 32);
 			this.mainStatusStrip.TabIndex = 2;
 			this.mainStatusStrip.Text = "statusStrip1";
-			// 
-			// applicationStatusLabel
-			// 
-			this.applicationStatusLabel.Name = "applicationStatusLabel";
-			this.applicationStatusLabel.Size = new System.Drawing.Size(26, 17);
-			this.applicationStatusLabel.Text = "Idle";
-			// 
-			// currentActionProgressBar
-			// 
-			this.currentActionProgressBar.Name = "currentActionProgressBar";
-			this.currentActionProgressBar.Size = new System.Drawing.Size(100, 18);
-			this.currentActionProgressBar.Visible = false;
-			// 
-			// flexSpace
-			// 
-			this.flexSpace.Name = "flexSpace";
-			this.flexSpace.Size = new System.Drawing.Size(211, 17);
-			this.flexSpace.Spring = true;
 			// 
 			// appVersionLabel
 			// 
 			this.appVersionLabel.Enabled = false;
 			this.appVersionLabel.Name = "appVersionLabel";
 			this.appVersionLabel.RightToLeft = System.Windows.Forms.RightToLeft.No;
-			this.appVersionLabel.Size = new System.Drawing.Size(46, 17);
+			this.appVersionLabel.Size = new System.Drawing.Size(46, 27);
 			this.appVersionLabel.Text = "Version";
+			// 
+			// applicationStatusLabel
+			// 
+			this.applicationStatusLabel.Name = "applicationStatusLabel";
+			this.applicationStatusLabel.Size = new System.Drawing.Size(26, 27);
+			this.applicationStatusLabel.Text = "Idle";
+			// 
+			// currentActionProgressBar
+			// 
+			this.currentActionProgressBar.Name = "currentActionProgressBar";
+			this.currentActionProgressBar.Size = new System.Drawing.Size(100, 26);
+			this.currentActionProgressBar.Visible = false;
+			// 
+			// flexSpace
+			// 
+			this.flexSpace.Name = "flexSpace";
+			this.flexSpace.Size = new System.Drawing.Size(201, 27);
+			this.flexSpace.Spring = true;
+			// 
+			// SprocketLogoButton
+			// 
+			this.SprocketLogoButton.AutoSize = false;
+			this.SprocketLogoButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.SprocketLogoButton.Enabled = false;
+			this.SprocketLogoButton.Font = new System.Drawing.Font("Segoe UI", 9F);
+			this.SprocketLogoButton.Image = ((System.Drawing.Image)(resources.GetObject("SprocketLogoButton.Image")));
+			this.SprocketLogoButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+			this.SprocketLogoButton.Margin = new System.Windows.Forms.Padding(0);
+			this.SprocketLogoButton.Name = "SprocketLogoButton";
+			this.SprocketLogoButton.Size = new System.Drawing.Size(96, 32);
+			this.SprocketLogoButton.Text = "Sprocket Inc.";
+			this.SprocketLogoButton.ToolTipText = "Sprocket Inc.";
 			// 
 			// iconImageList
 			// 
@@ -219,7 +257,7 @@
 			this.dropboxHint.Enabled = false;
 			this.dropboxHint.Location = new System.Drawing.Point(0, 25);
 			this.dropboxHint.Name = "dropboxHint";
-			this.dropboxHint.Size = new System.Drawing.Size(298, 234);
+			this.dropboxHint.Size = new System.Drawing.Size(384, 255);
 			this.dropboxHint.TabIndex = 4;
 			this.dropboxHint.TabStop = false;
 			this.dropboxHint.Visible = false;
@@ -233,7 +271,7 @@
 			this.dropboxHint_desaturated.Enabled = false;
 			this.dropboxHint_desaturated.Location = new System.Drawing.Point(0, 25);
 			this.dropboxHint_desaturated.Name = "dropboxHint_desaturated";
-			this.dropboxHint_desaturated.Size = new System.Drawing.Size(298, 234);
+			this.dropboxHint_desaturated.Size = new System.Drawing.Size(384, 255);
 			this.dropboxHint_desaturated.TabIndex = 5;
 			this.dropboxHint_desaturated.TabStop = false;
 			this.dropboxHint_desaturated.Visible = false;
@@ -242,12 +280,12 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(298, 281);
+			this.ClientSize = new System.Drawing.Size(384, 312);
 			this.Controls.Add(this.dropboxHint_desaturated);
 			this.Controls.Add(this.dropboxHint);
 			this.Controls.Add(this.mainStatusStrip);
 			this.Controls.Add(this.monitoredFilesListView);
-			this.Controls.Add(this.toolStrip1);
+			this.Controls.Add(this.mainToolStrip);
 			this.DoubleBuffered = true;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
@@ -258,8 +296,8 @@
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
 			this.Resize += new System.EventHandler(this.MainForm_Resize);
-			this.toolStrip1.ResumeLayout(false);
-			this.toolStrip1.PerformLayout();
+			this.mainToolStrip.ResumeLayout(false);
+			this.mainToolStrip.PerformLayout();
 			this.mainStatusStrip.ResumeLayout(false);
 			this.mainStatusStrip.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.dropboxHint)).EndInit();
@@ -271,7 +309,7 @@
 
 		#endregion
 
-		private System.Windows.Forms.ToolStrip toolStrip1;
+		private System.Windows.Forms.ToolStrip mainToolStrip;
 		private System.Windows.Forms.ToolStripComboBox activeConfigurationComboBox;
 		private System.Windows.Forms.ToolStripButton addConfigurationButton;
 		private System.Windows.Forms.ToolStripButton removeConfigurationButton;
@@ -292,6 +330,9 @@
 		private System.Windows.Forms.ToolTip dropboxTooltip;
 		private System.Windows.Forms.ToolStripStatusLabel appVersionLabel;
 		private System.Windows.Forms.ToolStripStatusLabel flexSpace;
+		private System.Windows.Forms.ToolStripStatusLabel SprocketLogoButton;
+		private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+		private System.Windows.Forms.ToolStripButton saveConfigurationsButton;
 	}
 }
 

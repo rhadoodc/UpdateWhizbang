@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Xml.Serialization;
 
 namespace Sprocket.UpdateMonitor
@@ -6,7 +7,15 @@ namespace Sprocket.UpdateMonitor
 	[Serializable]
 	public class Configuration
 	{
-		const string configLocation_key = "configs/{0}.xml";
+		const string configFolder_key = "configs";
+		const string configFile_key = "{0}.xml";
+		string configLocation_key
+		{
+			get
+			{
+				return Path.Combine(Program.appDataPath, configFolder_key, configFile_key);
+			}
+		}
 
 		public string name;
 

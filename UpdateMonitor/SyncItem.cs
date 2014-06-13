@@ -84,7 +84,9 @@ namespace Sprocket.UpdateMonitor
 		{
 			FileSystemInfo TargetFileInfo = null;
 
-			var path = Path.Combine(targetPath, sourceFileInfo.Name);
+			SourceFileInfo.Refresh();
+
+			var path = Path.Combine(targetPath, SourceFileInfo.Name);
 			
 			var attributes = File.GetAttributes(SourcePath);
 
@@ -126,9 +128,9 @@ namespace Sprocket.UpdateMonitor
 
 			foreach (var targetPath in targetPaths)
 			{
-				var state = CheckUpToDate(targetPath);
+				SyncState state = CheckUpToDate(targetPath);
 
-				doWork |= (state == SyncState.Outdated) || (state == SyncState.TargetNotFound);
+				doWork = doWork || ((state == SyncState.Outdated) || (state == SyncState.TargetNotFound));
 
 				try
 				{

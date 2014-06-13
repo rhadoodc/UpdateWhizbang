@@ -517,5 +517,10 @@ namespace Sprocket.UpdateMonitor
 			//if ((dropboxHint.Visible == false) && (Visible == true))
 			//	ShowDropboxHint();
 		}
+
+		private void saveConfigurationsButton_Click(object sender, EventArgs e)
+		{
+			Program.configManager.SaveAll();
+		}
 	}
 }

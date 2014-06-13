@@ -33,6 +33,8 @@ namespace Sprocket.UpdateMonitor
 
 		const int targetLayoutBaseline = 67;
 
+		private static string lastTargetPath = "";
+
 		public SyncItemProperties()
 		{
 			InitializeComponent();
@@ -124,10 +126,12 @@ namespace Sprocket.UpdateMonitor
 
 			browseButton.Click += (object sender, EventArgs e) => 
 			{
+				folderBrowserDialog.SelectedPath = lastTargetPath;
 				var result = folderBrowserDialog.ShowDialog();
 
 				if (result == DialogResult.OK)
 				{
+					lastTargetPath = folderBrowserDialog.SelectedPath;
 					targetPathTextBox.Text = folderBrowserDialog.SelectedPath;
 				}
 			};

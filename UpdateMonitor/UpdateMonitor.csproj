@@ -117,6 +117,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="brick_link.ico" />
+    <None Include="Resources\save_to_disk.png" />
+    <None Include="Resources\SprocketLogoInlineSmall.png" />
     <None Include="Resources\dropbox_desaturated.png" />
     <None Include="Resources\dropbox.png" />
     <None Include="Resources\stop.png" />
@@ -139,7 +141,7 @@
 	-->
   <PropertyGroup>
     <PostBuildEvent>
-		</PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <Target Name="AfterBuild" Condition="'Release' == '$(ConfigurationName)'">
     <Exec Command="echo Running AfterBuild Target" />
@@ -147,6 +149,6 @@
       <Output TaskParameter="Assemblies" ItemName="AssemblyVersion" />
     </GetAssemblyIdentity>
     <Exec Command="echo Built version %(AssemblyVersion.Version)%" />
-    <Exec Command="if &quot;Release&quot; == &quot;$(ConfigurationName)&quot; &quot;C:\Program Files\7-Zip\7z.exe&quot; a -tzip  &quot;$(ProjectDir)Binaries\UpdateWhizbang_v%(AssemblyVersion.Version).zip&quot; &quot;$(TargetPath)&quot; &quot;$(TargetPath).config&quot;" />
+    <Exec Command="if &quot;Release&quot; == &quot;$(ConfigurationName)&quot; &quot;C:\Program Files\7-Zip\7z.exe&quot; a -tzip  &quot;$(ProjectDir)Binaries\UpdateWhizbang_v%(AssemblyVersion.Version).zip&quot; &quot;$(ProjectDir)..\README&quot; &quot;$(ProjectDir)..\LICENSE&quot; &quot;$(TargetPath)&quot; &quot;$(TargetPath).config&quot;" />
   </Target>
 </Project>

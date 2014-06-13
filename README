@@ -2,6 +2,7 @@ Update Whizbang
 ===============
 
 A small application that monitors changes in a set of files and mirrors them into target locations.
+Written by the brave sprocketeers at Sprocket Inc.
 
 1. Description:
 
@@ -9,15 +10,22 @@ A small application that monitors changes in a set of files and mirrors them int
 
 2. Change list:
 
-	v0.1 - First Version
+	v0.1 - 	First Version
+	v0.2 - 	Multiple target paths supported
+			Support for synchronizing folders
+			Minor usability tweaks
+			Version info is now visible in the status bar at the bottom
+			Added branding
+			Configuration files are now saved to %appdata%\Sprocket Inc.\Update Whizbang\
+			
 	
 3. Building from source:
 
-	If you have obtained the application as source files, just open the solution file (UpdateManager.sln) using Visual Studio (2012 or later tested to work) and trigger a build for the configuration you would like to use (Release, most probably); you will then find the binaries inside the 'bin/' folder.
+	If you have obtained the application as source files, just open the solution file (UpdateManager.sln) using Visual Studio (2012 or later tested to work) and trigger a build for the configuration you would like to use (Release, most probably); you will then find the raw binaries inside the 'bin/' folder, and packaged (alongside this README and the LICENSE file) binaries inside the 'Binaries' folder.
 
 4. Usage:
 
-	Upon first run of the application it will prompt you to create a configuration - configurations are separate sets of items to synchronize. After you have created a configuration, you can begin adding files to it by dragging them into the drop view. As soon as you drop a file (or several) in, the properties view will show, asking you to set a target folder to sync the file(s) to. Once you've set a target path click apply. You can rinse and repeat the process to add more files.
+	Upon first run of the application it will prompt you to create a configuration - configurations are separate sets of items to synchronize. After you have created a configuration, you can begin adding files to it by dragging them into the drop view. As soon as you drop a file (or several) in, the properties view will show, asking you to set a target folder to sync the file(s) to. Once you've set one (or several) target path(s) click apply. You can rinse and repeat the process to add more files.
 	
 	Every few seconds the Whizbang will check for changes to the 'source' files you have added to the currently active configuration (the one selected in the upper left combo box), and if any are detected, it will copy the files to the target directory.
 	

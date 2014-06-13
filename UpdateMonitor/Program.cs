@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Forms;
 
 namespace Sprocket.UpdateMonitor
@@ -7,6 +8,14 @@ namespace Sprocket.UpdateMonitor
 	{
 		public static ConfigurationManager configManager;
 		private static MainForm mainForm;
+
+		public static string appDataPath
+		{
+			get
+			{
+				return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), Properties.Resources.sprocketAppDataFolder_key, Properties.Resources.updateMonitorAppDataFolder_key);
+			}
+		}
 
 		/// <summary>
 		/// The main entry point for the application.
