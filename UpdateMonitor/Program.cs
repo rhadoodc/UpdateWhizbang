@@ -7,14 +7,40 @@ namespace Sprocket.UpdateMonitor
 	static class Program
 	{
 		public static ConfigurationManager configManager;
-		private static MainForm mainForm;
+		public static MainForm mainForm;
 
-		public static string appDataPath
+		public const string logFolder_key = "logs";
+		public const string logFileFormat_key = "{0} - {1}.txt";
+
+		public const string userResponse_key = "User response: {0}\r\n";
+
+		private const string timeStamp_key = "[{0}]";
+		private const string newLine_key = "\r\n";
+
+		public static string LogFilesPath
+		{
+			get
+			{
+				return Path.Combine(Program.AppDataPath, logFolder_key);
+			}
+		}
+
+		public static readonly string currentLogFile;
+
+		public static string AppDataPath
 		{
 			get
 			{
 				return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), Properties.Resources.sprocketAppDataFolder_key, Properties.Resources.updateMonitorAppDataFolder_key);
 			}
+		}
+
+		static Program()
+		{
+			var logFileName = string.Format(logFileFormat_key, DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString());
+			logFileName = logFileName.Replace('/', '-');
+			logFileName = logFileName.Replace(':', '_');
+			currentLogFile = Path.Combine(LogFilesPath, logFileName);
 		}
 
 		/// <summary>
@@ -25,6 +51,8 @@ namespace Sprocket.UpdateMonitor
 		{
 			Application.SetCompatibleTextRenderingDefault(false);
 			Application.EnableVisualStyles();
+
+			Directory.CreateDirectory(Path.GetDirectoryName(currentLogFile));
 			
 			configManager = new ConfigurationManager();
 
@@ -34,6 +62,24 @@ namespace Sprocket.UpdateMonitor
 			mainForm.Initialize();
 
 			Application.Run(mainForm);
+		}
+
+		public static void Log(string contents, string header = "", string footer = "")
+		{
+			using (StreamWriter writer = new StreamWriter(Program.currentLogFile, true))
+			{
+				writer.WriteLine(timeStamp_key, DateTime.Now.ToLongTimeString());
+
+				if (header != "")
+					writer.WriteLine(header, DateTime.Now.ToLongTimeString());
+
+				writer.Write(contents);
+
+				if (footer != "")
+					writer.WriteLine(footer);
+
+				writer.WriteLine(newLine_key);
+			}
 		}
 	}
 }

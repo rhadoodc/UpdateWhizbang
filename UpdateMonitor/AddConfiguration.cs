@@ -12,6 +12,8 @@ namespace Sprocket.UpdateMonitor
 		const string invalidCharsError_key = "The configuration name can't contain any of the following characters: {0}.";
 		const string nameTooShort_key = "The configuration name must be 3 characters or longer.";
 
+		const string dialogShown_key = "User added configuration";
+
 		const string listSeparator_key = ", ";
 		const string lineSeparator_key = "\n";
 
@@ -45,6 +47,8 @@ namespace Sprocket.UpdateMonitor
 		public new DialogResult ShowDialog()
 		{
 			base.ShowDialog();
+
+			Program.Log(configNameTextBox.Text, dialogShown_key, string.Format(Program.userResponse_key, DialogResult.ToString()));
 
 			return DialogResult;
 		}

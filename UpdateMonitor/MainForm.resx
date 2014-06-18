@@ -123,6 +123,9 @@
   <metadata name="listViewContextMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>259, 17</value>
   </metadata>
+  <metadata name="iconImageList.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>426, 17</value>
+  </metadata>
   <metadata name="dropboxTooltip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>822, 17</value>
   </metadata>
@@ -153,9 +156,6 @@
         rhSlJjIo1uvKLaCPMfRW/+G2YyUy2C5B+2nf8R1wOPwGDm/mK87fkDMAAAAASUVORK5CYII=
 </value>
   </data>
-  <metadata name="iconImageList.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>426, 17</value>
-  </metadata>
   <metadata name="notifyIcon.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>553, 17</value>
   </metadata>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -19,7 +20,7 @@ namespace Sprocket.UpdateMonitor
 
 		const string multipleUnmatchTargetPathsOverrideTitle_key = "Override Multiple Unmatched Paths";
 
-		const string minimizedNotification_key = "The whizbang has retreated into the shadows and will continue to do your bidding quietly. You can banish it completely by right-clicking its icon in the notification area.";
+		const string minimizedNotification_key = "The Whizbang has retreated into the shadows and will continue to do your bidding quietly. You can banish it completely by right-clicking its icon in the notification area.";
 		const string minimized_key = "Minimized";
 
 		const string syncAll_key = "Sync All";
@@ -32,10 +33,13 @@ namespace Sprocket.UpdateMonitor
 		const string syncingSelected_key = "Syncing Selected...";
 		const string syncing_key = "Syncing...";
 		const string synchronized_key = "Synchronized";
+		const string updated_key = "Updated";
 
-		const string synchronizedStatus_key = "The whizbang has synchronized {0} items.";
+		const string synchronizedStatus_key = "The Whizbang has synchronized {0} items.";
 
 		const string idle_key = "Idle";
+
+		const string monitoredItemToolTip_key = "{0}\n{1} {2}";
 
 		int lastSelectedConfigurationIndex = -1;
 
@@ -43,6 +47,8 @@ namespace Sprocket.UpdateMonitor
 
 		Timer timer;
 		//Timer dropBoxHintTimer;
+
+		Timer newsTimer;
 
 		public MainForm()
 		{
@@ -58,10 +64,15 @@ namespace Sprocket.UpdateMonitor
 			Program.configManager.OnSyncListUpdated += OnSyncListUpdated;
 			Program.configManager.OnRequireNewConfig += OnRequireNewConfig;
 
-			timer = new Timer();
-			timer.Enabled = true;
-			timer.Interval = 10000;
-			timer.Tick += Sync;
+			//timer = new Timer();
+			//timer.Enabled = true;
+			//timer.Interval = 10000;
+			//timer.Tick += Sync;
+
+			newsTimer = new Timer();
+			newsTimer.Enabled = true;
+			newsTimer.Interval = 10000;
+			newsTimer.Tick += ShowSyncItemChanges;
 
 			//dropBoxHintTimer = new Timer();
 			//dropBoxHintTimer.Enabled = false;
@@ -105,7 +116,12 @@ namespace Sprocket.UpdateMonitor
 
 			if (answer != System.Windows.Forms.DialogResult.Cancel)
 			{
-				timer.Dispose();
+				//if (timer != null)
+					//timer.Dispose();
+
+				if (newsTimer != null)
+					newsTimer.Dispose();
+
 				notifyIcon.Dispose();
 
 				Application.Exit();
@@ -151,6 +167,8 @@ namespace Sprocket.UpdateMonitor
 										confirmRemoveConfigTitle_key, 
 										MessageBoxButtons.YesNo);
 
+			Program.Log(string.Format(confirmRemoveConfig_key, activeConfigurationComboBox.Text), confirmRemoveConfigTitle_key, string.Format(Program.userResponse_key, result.ToString()));
+
 			if (result == System.Windows.Forms.DialogResult.Yes)
 			{
 				Program.configManager.RemoveConfiguration(activeConfigurationComboBox.Text);
@@ -179,6 +197,7 @@ namespace Sprocket.UpdateMonitor
 				if (!monitoredFilesListView.Items.ContainsKey(kvp.Key))
 				{
 					monitoredFilesListView.Items.Add(kvp.Key, kvp.Value.SourceFileInfo.Name, kvp.Value.SourceFileInfo.Extension);
+					monitoredFilesListView.Items[kvp.Key].ToolTipText = string.Format(monitoredItemToolTip_key, kvp.Value.SourceFileInfo.Name, kvp.Value.SourceFileInfo.LastWriteTime.ToShortDateString(), kvp.Value.SourceFileInfo.LastWriteTime.ToShortTimeString());
 				}
 			}
 
@@ -235,6 +254,8 @@ namespace Sprocket.UpdateMonitor
 			else
 			{
 				Program.configManager.SetActiveConfiguration(activeConfigurationComboBox.SelectedItem.ToString());
+
+				SyncAll();
 
 				lastSelectedConfigurationIndex = activeConfigurationComboBox.SelectedIndex;
 			}
@@ -347,12 +368,25 @@ namespace Sprocket.UpdateMonitor
 
 			if (result == DialogResult.OK)
 			{
-				if (!multipleUnmatchedTargets 
-				|| (MessageBox.Show(multipleUnmatchedTargetPathsOverride_key, multipleUnmatchTargetPathsOverrideTitle_key, MessageBoxButtons.OKCancel) == DialogResult.OK))
+				if (!multipleUnmatchedTargets)
 				{
 					foreach (var item in targetItems)
 					{
 						item.targetPaths = props.targetPathTextBoxes.Where(b => b.Enabled == true).Select(t => t.Text).Where(x => x != string.Empty).ToList();
+					}
+				}
+				else
+				{
+					var userAnswer = MessageBox.Show(multipleUnmatchedTargetPathsOverride_key, multipleUnmatchTargetPathsOverrideTitle_key, MessageBoxButtons.OKCancel);
+
+					Program.Log(multipleUnmatchedTargetPathsOverride_key, multipleUnmatchTargetPathsOverrideTitle_key, string.Format(Program.userResponse_key, result.ToString()));
+
+					if (result == DialogResult.OK)
+					{
+						foreach (var item in targetItems)
+						{
+							item.targetPaths = props.targetPathTextBoxes.Where(b => b.Enabled == true).Select(t => t.Text).Where(x => x != string.Empty).ToList();
+						}
 					}
 				}
 			}
@@ -425,6 +459,8 @@ namespace Sprocket.UpdateMonitor
 			if (syncCounter > 0)
 			{
 				notifyIcon.ShowBalloonTip(2500, synchronized_key, string.Format(synchronizedStatus_key, syncCounter), ToolTipIcon.Info);
+
+				Program.Log(string.Format(synchronizedStatus_key, syncCounter));
 			}
 
 			currentActionProgressBar.Visible = false;
@@ -460,11 +496,52 @@ namespace Sprocket.UpdateMonitor
 			if (syncCounter > 0)
 			{
 				notifyIcon.ShowBalloonTip(2500, synchronized_key, string.Format(synchronizedStatus_key, syncCounter), ToolTipIcon.Info);
+
+				Program.Log(string.Format(synchronizedStatus_key, syncCounter));
 			}
 
 			currentActionProgressBar.Visible = false;
 
 			applicationStatusLabel.Text = idle_key;
+		}
+
+		private const string syncItemSourceChanged_key = "'{0}' was changed and obediently synchronized by the Whizbang.\n";
+		private const string syncItemSourceRenamed_key = "'{0}' was renamed to '{1}' and the Whizbang has taken note.\n";
+		private const string syncItemSourceDeleted_key = "'{0}' was deleted or moved, but the Whizbang remembers it fondly.\n";
+		private const string syncItemSourceError_key = "'{0}' has become unavailable, and the Whizbang will miss it.\n";
+
+		private string syncItemSourceChanges = string.Empty;
+
+		public void item_SyncItemSourceChanged(string itemPath)
+		{
+			syncItemSourceChanges += string.Format(syncItemSourceChanged_key, Path.GetFileName(itemPath));
+		}
+
+		public void item_SyncItemSourceRenamed(string itemOldPath, string itemNewPath)
+		{
+			syncItemSourceChanges += string.Format(syncItemSourceRenamed_key, Path.GetFileName(itemOldPath), Path.GetFileName(itemNewPath));
+		}
+
+		public void item_SyncItemSourceDeleted(string itemPath)
+		{
+			syncItemSourceChanges += string.Format(syncItemSourceDeleted_key, Path.GetFileName(itemPath));
+		}
+
+		public void item_SyncItemSourceError(string itemPath)
+		{
+			syncItemSourceChanges += string.Format(syncItemSourceError_key, Path.GetFileName(itemPath));
+		}
+
+		private void ShowSyncItemChanges(object sender, EventArgs e)
+		{
+			if (syncItemSourceChanges != string.Empty)
+			{
+				notifyIcon.ShowBalloonTip(2500, updated_key, syncItemSourceChanges, ToolTipIcon.Info);
+
+				Program.Log(syncItemSourceChanges);
+
+				syncItemSourceChanges = string.Empty;
+			}
 		}
 
 		internal void Initialize()
@@ -521,6 +598,18 @@ namespace Sprocket.UpdateMonitor
 		private void saveConfigurationsButton_Click(object sender, EventArgs e)
 		{
 			Program.configManager.SaveAll();
+		}
+
+		private void notifyIcon_BalloonTipClicked(object sender, EventArgs e)
+		{
+			var logView = new LogView();
+			logView.Show();
+		}
+
+		private void showLogViewButton_Click(object sender, EventArgs e)
+		{
+			var logView = new LogView();
+			logView.Show();
 		}
 	}
 }

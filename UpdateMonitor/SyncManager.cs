@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -23,6 +24,9 @@ namespace Sprocket.UpdateMonitor
 		const string syncItemsLoadError_key = "An error occured trying to load sync items from '{0}':\n{1}";
 		const string syncItemsLoadErrorTitle_key = "Couldn't load sync items...";
 
+		const string syncItemAddedHeader_key = "Sync item added:";
+		const string syncItemRemovedHeader_key = "Sync item removed:";
+
 		public bool Modified = false;
 
 		public int SyncItemCount
@@ -36,6 +40,8 @@ namespace Sprocket.UpdateMonitor
 		public SyncManager()
 		{
 			items = new Dictionary<string,SyncItem>();
+
+			updateSyncListDelegate = UpdateSyncList;
 		}
 
 		public void LoadSyncList(string path)
@@ -56,12 +62,22 @@ namespace Sprocket.UpdateMonitor
 				foreach (var item in loadedList)
 				{
 					items.Add((item.SourceFileInfo.FullName), item);
+
+					item.SyncItemSourceChanged += Program.mainForm.item_SyncItemSourceChanged;
+					item.SyncItemSourceRenamed += Program.mainForm.item_SyncItemSourceRenamed;
+					item.SyncItemSourceDeleted += Program.mainForm.item_SyncItemSourceDeleted;
+					item.SyncItemSourceError += Program.mainForm.item_SyncItemSourceError;
+
+					item.SyncItemSourceRenamed += item_SyncItemSourceRenamed;
 				}
 			}
 			catch (System.Exception ex)
 			{
 				if (!(ex is FileNotFoundException || ex is DirectoryNotFoundException))
 				{
+					Program.Log(string.Format(syncItemsLoadError_key, Path.GetFullPath(path), ex.Message),
+								syncItemsLoadErrorTitle_key);
+
 					MessageBox.Show(string.Format(syncItemsLoadError_key, Path.GetFullPath(path), ex.Message),
 								syncItemsLoadErrorTitle_key,
 								MessageBoxButtons.OK,
@@ -102,6 +118,9 @@ namespace Sprocket.UpdateMonitor
 			}
 			catch (System.Exception ex)
 			{
+				Program.Log(string.Format(syncItemsSaveError_key, Path.GetFullPath(path), ex.Message),
+								syncItemsSaveErrorTitle_key);
+
 				MessageBox.Show(string.Format(syncItemsSaveError_key, Path.GetFullPath(path), ex.Message),
 								syncItemsSaveErrorTitle_key,
 								MessageBoxButtons.OK,
@@ -121,7 +140,16 @@ namespace Sprocket.UpdateMonitor
 		{
 			if (!items.ContainsKey(item.SourceFileInfo.FullName))
 			{
+				item.SyncItemSourceChanged += Program.mainForm.item_SyncItemSourceChanged;
+				item.SyncItemSourceRenamed += Program.mainForm.item_SyncItemSourceRenamed;
+				item.SyncItemSourceDeleted += Program.mainForm.item_SyncItemSourceDeleted;
+				item.SyncItemSourceError += Program.mainForm.item_SyncItemSourceError;
+
+				item.SyncItemSourceRenamed += item_SyncItemSourceRenamed;
+
 				items.Add((item.SourceFileInfo.FullName), item); //hash this shorter?
+
+				Program.Log(item.SourceFileInfo.FullName, syncItemAddedHeader_key);
 			}
 
 			Modified = true;
@@ -129,8 +157,22 @@ namespace Sprocket.UpdateMonitor
 			UpdateSyncList();
 		}
 
+		private delegate void UpdateSyncListDelegate();
+		private event UpdateSyncListDelegate updateSyncListDelegate;
+
+		void item_SyncItemSourceRenamed(string itemOldPath, string itemNewPath)
+		{
+			var item = items[itemOldPath];
+			items.Remove(itemOldPath);
+			items.Add((item.SourceFileInfo.FullName), item); //hash this shorter?
+
+			Program.mainForm.Invoke(updateSyncListDelegate);
+		}
+
 		public void RemoveSyncItem (string key)
 		{
+			Program.Log(items[key].SourceFileInfo.FullName, syncItemRemovedHeader_key);
+
 			items.Remove(key);
 
 			Modified = true;

@@ -81,6 +81,16 @@ namespace Sprocket.UpdateMonitor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap arrow_refresh {
+            get {
+                object obj = ResourceManager.GetObject("arrow_refresh", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon brick_copy_icon {
@@ -156,6 +166,16 @@ namespace Sprocket.UpdateMonitor.Properties {
         internal static System.Drawing.Bitmap save_to_disk {
             get {
                 object obj = ResourceManager.GetObject("save_to_disk", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap script {
+            get {
+                object obj = ResourceManager.GetObject("script", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

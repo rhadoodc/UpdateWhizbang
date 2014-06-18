@@ -13,7 +13,7 @@ namespace Sprocket.UpdateMonitor
 		{
 			get
 			{
-				return Path.Combine(Program.appDataPath, configFolder_key, configFile_key);
+				return Path.Combine(Program.AppDataPath, configFolder_key, configFile_key);
 			}
 		}
 

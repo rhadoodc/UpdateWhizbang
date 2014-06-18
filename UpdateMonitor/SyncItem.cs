@@ -14,6 +14,23 @@ namespace Sprocket.UpdateMonitor
 
 		const string syncException_key = "An exception occured trying to copy {0} to {1}:\n{2}";
 
+		private FileSystemWatcher fileSystemWatcher = null;
+
+		private bool isDirectory = false;
+
+		public List<string> targetPaths = new List<string>();
+
+		[NonSerialized]
+		private FileSystemInfo sourceFileInfo = null;
+
+		public delegate void SyncItemChangeDelegate(string itemPath);
+		public delegate void SyncItemRenameDelegate(string itemOldPath, string itemNewPath);
+
+		public event SyncItemChangeDelegate SyncItemSourceChanged;
+		public event SyncItemRenameDelegate SyncItemSourceRenamed;
+		public event SyncItemChangeDelegate SyncItemSourceDeleted;
+		public event SyncItemChangeDelegate SyncItemSourceError;
+
 		public enum SyncState
 		{
 			None,
@@ -26,9 +43,6 @@ namespace Sprocket.UpdateMonitor
 			UpToDate,
 			Outdated,
 		}
-
-		[NonSerialized]
-		private FileSystemInfo sourceFileInfo = null;
 
 		public FileSystemInfo SourceFileInfo
 		{
@@ -52,18 +66,111 @@ namespace Sprocket.UpdateMonitor
 					var attributes = File.GetAttributes(value);
 
 					if ((attributes & FileAttributes.Directory) == FileAttributes.Directory)
+					{
+						isDirectory = true;
+
 						sourceFileInfo = new DirectoryInfo(value);
+
+						if (fileSystemWatcher != null)
+						{
+							fileSystemWatcher.Changed -= fileSystemWatcher_Changed;
+							fileSystemWatcher.Deleted -= fileSystemWatcher_Deleted;
+							fileSystemWatcher.Renamed -= fileSystemWatcher_Renamed;
+							fileSystemWatcher.Error -= fileSystemWatcher_Error;
+
+							fileSystemWatcher.Dispose();
+						}
+
+						fileSystemWatcher = new FileSystemWatcher(value);
+
+						fileSystemWatcher.NotifyFilter = NotifyFilters.DirectoryName;
+					}
 					else
+					{
 						sourceFileInfo = new FileInfo(value);
+
+						if (fileSystemWatcher != null)
+						{
+							fileSystemWatcher.Changed -= fileSystemWatcher_Changed;
+							fileSystemWatcher.Deleted -= fileSystemWatcher_Deleted;
+							fileSystemWatcher.Renamed -= fileSystemWatcher_Renamed;
+							fileSystemWatcher.Error -= fileSystemWatcher_Error;
+
+							fileSystemWatcher.Dispose();
+						}
+
+						fileSystemWatcher = new FileSystemWatcher(Path.GetDirectoryName(sourceFileInfo.FullName), sourceFileInfo.Name);
+
+						fileSystemWatcher.NotifyFilter = NotifyFilters.FileName;
+
+						fileSystemWatcher.EnableRaisingEvents = true;
+					}
+
+					fileSystemWatcher.NotifyFilter |= NotifyFilters.Attributes | NotifyFilters.LastWrite;
+
+					fileSystemWatcher.Changed += fileSystemWatcher_Changed;
+					fileSystemWatcher.Deleted += fileSystemWatcher_Deleted;
+					fileSystemWatcher.Renamed += fileSystemWatcher_Renamed;
+					fileSystemWatcher.Error += fileSystemWatcher_Error;
 				}
 				catch (System.Exception ex)
 				{
+					Program.Log(string.Format(sourcePathException_key, value, ex.Message), exception_key);
+
 					MessageBox.Show(string.Format(sourcePathException_key, value, ex.Message), exception_key, MessageBoxButtons.OK);
 				}
 			}
 		}
 
-		public List<string> targetPaths = new List<string>();
+		void fileSystemWatcher_Error(object sender, ErrorEventArgs e)
+		{
+			var eh = SyncItemSourceError;
+
+			if (eh != null)
+			{
+				eh(SourceFileInfo.FullName);
+			}
+		}
+
+		void fileSystemWatcher_Deleted(object sender, FileSystemEventArgs e)
+		{
+			var eh = SyncItemSourceDeleted;
+
+			if (eh != null)
+			{
+				eh(SourceFileInfo.FullName);
+			}
+		}
+
+		void fileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
+		{
+			bool didWork = Sync();
+
+			if (didWork)
+			{
+				var eh = SyncItemSourceChanged;
+
+				if (eh != null)
+				{
+					eh(SourceFileInfo.FullName);
+				}
+			}
+		}
+
+		void fileSystemWatcher_Renamed(object sender, RenamedEventArgs e)
+		{
+			if (SourcePath == e.OldFullPath)
+			{
+				SourcePath = e.FullPath;
+
+				var eh = SyncItemSourceRenamed;
+
+				if (eh != null)
+				{
+					eh(e.OldFullPath, e.FullPath);
+				}
+			}
+		}
 
 		public SyncItem()
 		{
@@ -87,10 +194,8 @@ namespace Sprocket.UpdateMonitor
 			SourceFileInfo.Refresh();
 
 			var path = Path.Combine(targetPath, SourceFileInfo.Name);
-			
-			var attributes = File.GetAttributes(SourcePath);
 
-			if ((attributes & FileAttributes.Directory) == FileAttributes.Directory)
+			if (isDirectory)
 				TargetFileInfo = new DirectoryInfo(path);
 			else
 				TargetFileInfo = new FileInfo(path);
@@ -136,8 +241,7 @@ namespace Sprocket.UpdateMonitor
 				{
 					if (doWork)
 					{
-						var attributes = File.GetAttributes(SourcePath);
-						if ((attributes & FileAttributes.Directory) == FileAttributes.Directory)
+						if (isDirectory)
 							DirectoryCopy(SourcePath, Path.Combine(targetPath, SourceFileInfo.Name), true);
 						else
 							File.Copy(SourcePath, Path.Combine(targetPath, SourceFileInfo.Name), true);
@@ -145,6 +249,8 @@ namespace Sprocket.UpdateMonitor
 				}
 				catch (System.Exception ex)
 				{
+					Program.Log(string.Format(syncException_key, SourcePath, targetPath, ex.Message), exception_key);
+
 					MessageBox.Show(string.Format(syncException_key, SourcePath, targetPath, ex.Message), exception_key, MessageBoxButtons.OK);
 				}
 			}

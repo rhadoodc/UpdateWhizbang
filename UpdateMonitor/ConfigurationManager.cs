@@ -26,7 +26,7 @@ namespace Sprocket.UpdateMonitor
 		{
 			get
 			{
-				return Path.Combine(Program.appDataPath, configBucketFile_key);
+				return Path.Combine(Program.AppDataPath, configBucketFile_key);
 			}
 		}
 
@@ -87,6 +87,8 @@ namespace Sprocket.UpdateMonitor
 
 				if (!(ex is FileNotFoundException || ex is DirectoryNotFoundException))
 				{
+					Program.Log(string.Format(configBucketLoadError_key, Path.GetFullPath(ConfigBucketPath), ex.Message), configBucketLoadErrorTitle_key);
+
 					MessageBox.Show(string.Format(configBucketLoadError_key, Path.GetFullPath(ConfigBucketPath), ex.Message),
 								configBucketLoadErrorTitle_key,
 								MessageBoxButtons.OK,
@@ -134,6 +136,9 @@ namespace Sprocket.UpdateMonitor
 			}
 			catch (System.Exception ex)
 			{
+				Program.Log(string.Format(configBucketSaveError_key, Path.GetFullPath(ConfigBucketPath), ex.Message),
+								configBucketSaveErrorTitle_key);
+
 				MessageBox.Show(string.Format(configBucketSaveError_key, Path.GetFullPath(ConfigBucketPath), ex.Message),
 								configBucketSaveErrorTitle_key,
 								MessageBoxButtons.OK,
@@ -164,6 +169,8 @@ namespace Sprocket.UpdateMonitor
 												configBucketChangedTitle_key,
 												MessageBoxButtons.YesNoCancel, 
 												MessageBoxIcon.Warning);
+
+				Program.Log(configBucketChanged_key, configBucketChangedTitle_key, string.Format(Program.userResponse_key, userAnswer.ToString()));
 
 				if (userAnswer == DialogResult.Yes)
 				{

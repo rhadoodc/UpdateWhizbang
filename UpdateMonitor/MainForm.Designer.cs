@@ -37,6 +37,8 @@
 			this.forceSyncSelectedButton = new System.Windows.Forms.ToolStripButton();
 			this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
 			this.saveConfigurationsButton = new System.Windows.Forms.ToolStripButton();
+			this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+			this.showLogViewButton = new System.Windows.Forms.ToolStripButton();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.forceUpdateButton = new System.Windows.Forms.ToolStripButton();
 			this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
@@ -69,7 +71,9 @@
             this.removeConfigurationButton,
             this.forceSyncSelectedButton,
             this.toolStripSeparator3,
-            this.saveConfigurationsButton});
+            this.saveConfigurationsButton,
+            this.toolStripSeparator4,
+            this.showLogViewButton});
 			this.mainToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.mainToolStrip.Name = "mainToolStrip";
 			this.mainToolStrip.Size = new System.Drawing.Size(384, 25);
@@ -130,9 +134,26 @@
 			this.saveConfigurationsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.saveConfigurationsButton.Name = "saveConfigurationsButton";
 			this.saveConfigurationsButton.Size = new System.Drawing.Size(23, 22);
-			this.saveConfigurationsButton.Text = "toolStripButton1";
+			this.saveConfigurationsButton.Text = "Save Configurations";
 			this.saveConfigurationsButton.ToolTipText = "Save Configurations";
 			this.saveConfigurationsButton.Click += new System.EventHandler(this.saveConfigurationsButton_Click);
+			// 
+			// toolStripSeparator4
+			// 
+			this.toolStripSeparator4.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.toolStripSeparator4.Name = "toolStripSeparator4";
+			this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
+			// 
+			// showLogViewButton
+			// 
+			this.showLogViewButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.showLogViewButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.showLogViewButton.Image = global::Sprocket.UpdateMonitor.Properties.Resources.script;
+			this.showLogViewButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.showLogViewButton.Name = "showLogViewButton";
+			this.showLogViewButton.Size = new System.Drawing.Size(23, 22);
+			this.showLogViewButton.Text = "Show Log";
+			this.showLogViewButton.Click += new System.EventHandler(this.showLogViewButton_Click);
 			// 
 			// toolStripSeparator1
 			// 
@@ -159,11 +180,17 @@
 			this.monitoredFilesListView.AllowDrop = true;
 			this.monitoredFilesListView.ContextMenuStrip = this.listViewContextMenu;
 			this.monitoredFilesListView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.monitoredFilesListView.FullRowSelect = true;
 			this.monitoredFilesListView.HideSelection = false;
+			this.monitoredFilesListView.LargeImageList = this.iconImageList;
 			this.monitoredFilesListView.Location = new System.Drawing.Point(0, 25);
 			this.monitoredFilesListView.Name = "monitoredFilesListView";
+			this.monitoredFilesListView.ShowItemToolTips = true;
 			this.monitoredFilesListView.Size = new System.Drawing.Size(384, 287);
+			this.monitoredFilesListView.SmallImageList = this.iconImageList;
+			this.monitoredFilesListView.Sorting = System.Windows.Forms.SortOrder.Ascending;
 			this.monitoredFilesListView.TabIndex = 1;
+			this.monitoredFilesListView.TileSize = new System.Drawing.Size(64, 64);
 			this.dropboxTooltip.SetToolTip(this.monitoredFilesListView, "Drag & Drop\r\n   Files Here");
 			this.monitoredFilesListView.UseCompatibleStateImageBehavior = false;
 			this.monitoredFilesListView.DragDrop += new System.Windows.Forms.DragEventHandler(this.monitoredFilesListView_DragDrop);
@@ -241,6 +268,7 @@
 			this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
 			this.notifyIcon.Text = "Update Whizbang";
 			this.notifyIcon.Visible = true;
+			this.notifyIcon.BalloonTipClicked += new System.EventHandler(this.notifyIcon_BalloonTipClicked);
 			this.notifyIcon.MouseUp += new System.Windows.Forms.MouseEventHandler(this.notifyIcon_MouseUp);
 			// 
 			// systrayContextMenu
@@ -333,6 +361,8 @@
 		private System.Windows.Forms.ToolStripStatusLabel SprocketLogoButton;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
 		private System.Windows.Forms.ToolStripButton saveConfigurationsButton;
+		private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+		private System.Windows.Forms.ToolStripButton showLogViewButton;
 	}
 }
 

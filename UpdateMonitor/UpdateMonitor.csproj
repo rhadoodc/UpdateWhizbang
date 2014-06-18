@@ -58,6 +58,12 @@
     <Compile Include="Configuration.cs" />
     <Compile Include="ConfigurationManager.cs" />
     <Compile Include="IconExtractor.cs" />
+    <Compile Include="LogView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LogView.Designer.cs">
+      <DependentUpon>LogView.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -76,6 +82,9 @@
     <Compile Include="SyncManager.cs" />
     <EmbeddedResource Include="AddConfiguration.resx">
       <DependentUpon>AddConfiguration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LogView.resx">
+      <DependentUpon>LogView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -117,6 +126,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="brick_link.ico" />
+    <None Include="Resources\arrow_refresh.png" />
+    <None Include="Resources\script.png" />
     <None Include="Resources\save_to_disk.png" />
     <None Include="Resources\SprocketLogoInlineSmall.png" />
     <None Include="Resources\dropbox_desaturated.png" />
