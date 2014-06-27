@@ -126,7 +126,7 @@ namespace Sprocket.UpdateMonitor
 
 			browseButton.Click += (object sender, EventArgs e) => 
 			{
-				folderBrowserDialog.SelectedPath = lastTargetPath;
+				folderBrowserDialog.SelectedPath = (targetPathTextBox.Text == string.Empty) ? lastTargetPath : targetPathTextBox.Text;
 				var result = folderBrowserDialog.ShowDialog();
 
 				if (result == DialogResult.OK)

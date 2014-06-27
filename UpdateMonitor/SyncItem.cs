@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 
@@ -9,10 +10,12 @@ namespace Sprocket.UpdateMonitor
 	public class SyncItem
 	{
 		const string exception_key = "Exception...";
-		const string sourcePathException_key = "An exception occured trying to get SOURCE file info for '{0}':\n{1}";
+		const string targetBusy_key = "Target busy...";
+		const string targetBusyText_key = "The TARGET file ({0}) is busy, and cannot be written to. It may be in use by another process.";
+		const string sourcePathException_key = "An exception occured trying to get SOURCE file info for '{0}':\n{1}. Would you like to break for debugging?";
 		const string targetPathException_key = "An exception occured trying to get TARGET file info for '{0}':\n{1}";
 
-		const string syncException_key = "An exception occured trying to copy {0} to {1}:\n{2}";
+		const string syncException_key = "An exception occured trying to copy {0} to {1}:\n{2}. Would you like to break for debugging?";
 
 		private FileSystemWatcher fileSystemWatcher = null;
 
@@ -117,7 +120,10 @@ namespace Sprocket.UpdateMonitor
 				{
 					Program.Log(string.Format(sourcePathException_key, value, ex.Message), exception_key);
 
-					MessageBox.Show(string.Format(sourcePathException_key, value, ex.Message), exception_key, MessageBoxButtons.OK);
+					var result = MessageBox.Show(string.Format(sourcePathException_key, value, ex.Message), exception_key, MessageBoxButtons.YesNo);
+
+					if (result == DialogResult.Yes)
+						Debugger.Break();
 				}
 			}
 		}
@@ -237,25 +243,75 @@ namespace Sprocket.UpdateMonitor
 
 				doWork = doWork || ((state == SyncState.Outdated) || (state == SyncState.TargetNotFound));
 
+				var combinedTargetPath = Path.Combine(targetPath, SourceFileInfo.Name);
+
 				try
 				{
 					if (doWork)
 					{
 						if (isDirectory)
-							DirectoryCopy(SourcePath, Path.Combine(targetPath, SourceFileInfo.Name), true);
+						{
+							DirectoryCopy(SourcePath, combinedTargetPath, true);
+						}
 						else
-							File.Copy(SourcePath, Path.Combine(targetPath, SourceFileInfo.Name), true);
+						{
+							var targetFileInfo = new FileInfo(combinedTargetPath);
+
+							while (IsFileLocked((FileInfo)SourceFileInfo))
+							{ ; }
+
+							if (IsFileLocked((FileInfo)targetFileInfo))
+							{
+								MessageBox.Show(string.Format(targetBusyText_key, combinedTargetPath), targetBusy_key, MessageBoxButtons.OK);
+								doWork = false;
+							}
+							else
+							{
+								Directory.CreateDirectory(Path.GetDirectoryName(combinedTargetPath));
+								File.Copy(SourcePath, combinedTargetPath, true);
+							}
+						}
 					}
 				}
 				catch (System.Exception ex)
 				{
 					Program.Log(string.Format(syncException_key, SourcePath, targetPath, ex.Message), exception_key);
 
-					MessageBox.Show(string.Format(syncException_key, SourcePath, targetPath, ex.Message), exception_key, MessageBoxButtons.OK);
+					var result = MessageBox.Show(string.Format(syncException_key, SourcePath, targetPath, ex.Message), exception_key, MessageBoxButtons.YesNo);
+
+					if (result == DialogResult.Yes)
+						Debugger.Break();
 				}
 			}
 
 			return doWork;
+		}
+
+		private static bool IsFileLocked(FileInfo file)
+		{
+			FileStream stream = null;
+
+			try
+			{
+				stream = file.Open(FileMode.Open, FileAccess.Read, FileShare.None);
+			}
+			catch (IOException ex)
+			{
+				//the file is unavailable because it is:
+				//still being written to
+				//or being processed by another thread
+				//or does not exist (has already been processed)
+				if (ex.GetType() == typeof(IOException))
+					return true;
+			}
+			finally
+			{
+				if (stream != null)
+					stream.Close();
+			}
+
+			//file is not locked
+			return false;
 		}
 
 		private void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
@@ -275,6 +331,10 @@ namespace Sprocket.UpdateMonitor
 			foreach (FileInfo file in files)
 			{
 				string temppath = Path.Combine(destDirName, file.Name);
+
+				while (IsFileLocked(file))
+				{ ; }
+
 				file.CopyTo(temppath, false);
 			}
 
