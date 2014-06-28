@@ -257,10 +257,10 @@ namespace Sprocket.UpdateMonitor
 						{
 							var targetFileInfo = new FileInfo(combinedTargetPath);
 
-							while (IsFileLocked((FileInfo)SourceFileInfo))
+							while (Program.IsFileLocked((FileInfo)SourceFileInfo))
 							{ ; }
 
-							if (IsFileLocked((FileInfo)targetFileInfo))
+							if (Program.IsFileLocked((FileInfo)targetFileInfo))
 							{
 								MessageBox.Show(string.Format(targetBusyText_key, combinedTargetPath), targetBusy_key, MessageBoxButtons.OK);
 								doWork = false;
@@ -287,33 +287,6 @@ namespace Sprocket.UpdateMonitor
 			return doWork;
 		}
 
-		private static bool IsFileLocked(FileInfo file)
-		{
-			FileStream stream = null;
-
-			try
-			{
-				stream = file.Open(FileMode.Open, FileAccess.Read, FileShare.None);
-			}
-			catch (IOException ex)
-			{
-				//the file is unavailable because it is:
-				//still being written to
-				//or being processed by another thread
-				//or does not exist (has already been processed)
-				if (ex.GetType() == typeof(IOException))
-					return true;
-			}
-			finally
-			{
-				if (stream != null)
-					stream.Close();
-			}
-
-			//file is not locked
-			return false;
-		}
-
 		private void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
 		{
 			// Get the subdirectories for the specified directory.
@@ -332,7 +305,7 @@ namespace Sprocket.UpdateMonitor
 			{
 				string temppath = Path.Combine(destDirName, file.Name);
 
-				while (IsFileLocked(file))
+				while (Program.IsFileLocked(file))
 				{ ; }
 
 				file.CopyTo(temppath, false);

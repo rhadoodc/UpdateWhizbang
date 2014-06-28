@@ -22,9 +22,9 @@ namespace Sprocket.UpdateMonitor
 		{
 			InitializeComponent();
 
-			updateLogDelegate = Refresh;
+			updateLogDelegate = Reload;
 
-			Refresh();
+			Reload();
 
 			fileSystemWatcher = new FileSystemWatcher(Path.GetDirectoryName(Program.currentLogFile), Path.GetFileName(Program.currentLogFile));
 
@@ -35,8 +35,13 @@ namespace Sprocket.UpdateMonitor
 			fileSystemWatcher.EnableRaisingEvents = true;
 		}
 
-		private void Refresh()
+		private void Reload()
 		{
+			var logFileInfo = new FileInfo(Program.currentLogFile);
+
+			while (Program.IsFileLocked(logFileInfo))
+			{ ; }
+
 			using (StreamReader reader = new StreamReader(Program.currentLogFile))
 			{
 				logTextBox.Text = reader.ReadToEnd();

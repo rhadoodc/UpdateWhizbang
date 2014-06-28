@@ -458,9 +458,9 @@ namespace Sprocket.UpdateMonitor
 
 			if (syncCounter > 0)
 			{
-				notifyIcon.ShowBalloonTip(2500, synchronized_key, string.Format(synchronizedStatus_key, syncCounter), ToolTipIcon.Info);
-
 				Program.Log(string.Format(synchronizedStatus_key, syncCounter));
+
+				notifyIcon.ShowBalloonTip(2500, synchronized_key, string.Format(synchronizedStatus_key, syncCounter), ToolTipIcon.Info);
 			}
 
 			currentActionProgressBar.Visible = false;
@@ -495,9 +495,9 @@ namespace Sprocket.UpdateMonitor
 
 			if (syncCounter > 0)
 			{
-				notifyIcon.ShowBalloonTip(2500, synchronized_key, string.Format(synchronizedStatus_key, syncCounter), ToolTipIcon.Info);
-
 				Program.Log(string.Format(synchronizedStatus_key, syncCounter));
+
+				notifyIcon.ShowBalloonTip(2500, synchronized_key, string.Format(synchronizedStatus_key, syncCounter), ToolTipIcon.Info);
 			}
 
 			currentActionProgressBar.Visible = false;
@@ -536,9 +536,9 @@ namespace Sprocket.UpdateMonitor
 		{
 			if (syncItemSourceChanges != string.Empty)
 			{
-				notifyIcon.ShowBalloonTip(2500, updated_key, syncItemSourceChanges, ToolTipIcon.Info);
-
 				Program.Log(syncItemSourceChanges);
+
+				notifyIcon.ShowBalloonTip(2500, updated_key, syncItemSourceChanges, ToolTipIcon.Info);
 
 				syncItemSourceChanges = string.Empty;
 			}
