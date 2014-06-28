@@ -17,6 +17,8 @@ namespace Sprocket.UpdateMonitor
 		private const string timeStamp_key = "[{0}]";
 		private const string newLine_key = "\r\n";
 
+		private const string startingUpLog_key = "Starting up...";
+
 		public static string LogFilesPath
 		{
 			get
@@ -60,6 +62,8 @@ namespace Sprocket.UpdateMonitor
 
 			configManager.Initialize();
 			mainForm.Initialize();
+
+			Program.Log(startingUpLog_key);
 
 			Application.Run(mainForm);
 		}
